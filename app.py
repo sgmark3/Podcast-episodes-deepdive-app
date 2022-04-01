@@ -1,77 +1,121 @@
 #!/usr/bin/env python
-# coding: utf-8
 
-# In[26]:
-
-
-import numpy as np
-import os
-import requests
+import csv
+import pickle
+import gensim
+from gensim.models import Word2Vec
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
-import plotly.express as px
 
-keycode = str(os.getenv('API_KEY'))
+file = open('../Podcast-episodes-deepdive-app/model/health_episodes_lda_model_umass.pkl','rb')
+health_lda_model = pickle.load(file)
+file.close()
 
-def load_data(t):
-    url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=' + t + '&apikey=' + keycode
-    r = requests.get(url)
-    data = r.json()
-    df = pd.DataFrame(data['Time Series (Daily)']).transpose()
-    dates = list(df.index)
-    df['years'] = np.array([int(item.split('-')[0]) for item in dates])
-    df['months'] = np.array([int(item.split('-')[1]) for item in dates])
-    df['days'] = np.array([int(item.split('-')[2]) for item in dates])
-    return df
+file = open('../Podcast-episodes-deepdive-app/model/sports_episodes_lda_model_umass.pkl','rb')
+sports_lda_model = pickle.load(file)
+file.close()
 
-ticker = st.text_input('Enter stock name here','MSFT')
+file = open('../Podcast-episodes-deepdive-app/model/religion_episodes_lda_model_umass.pkl','rb')
+religion_lda_model = pickle.load(file)
+file.close()
 
-Year = st.text_input('Year','2021')
+file = open('../Podcast-episodes-deepdive-app/model/invest_episodes_lda_model_umass.pkl','rb')
+invest_lda_model = pickle.load(file)
+file.close()
 
-Month = st.text_input('Month','10')
+file = open('../Podcast-episodes-deepdive-app/model/crime_episodes_lda_model_umass.pkl','rb')
+crime_lda_model = pickle.load(file)
+file.close()
 
-y_options = ['4. close', '1. open', '3. low', '2. high', '5. volume', '6. one_day_return']
+file = open('../Podcast-episodes-deepdive-app/model/nature_episodes_lda_model_umass.pkl','rb')
+nature_lda_model = pickle.load(file)
+file.close()
 
-y_axis = st.sidebar.selectbox('Which value do you want to explore', y_options)
+file = open('../Podcast-episodes-deepdive-app/model/all_genres_lda_model_30_umass.pkl','rb')
+nature_lda_model = pickle.load(file)
+file.close()
 
-df = load_data(ticker)
+df_health = pd.read_csv('../Podcast-episodes-deepdive-app/data/health.csv')
+df_sports = pd.read_csv('../Podcast-episodes-deepdive-app/data/sports.csv')
+df_religion = pd.read_csv('../Podcast-episodes-deepdive-app/data/religion.csv')
+df_invest = pd.read_csv('../Podcast-episodes-deepdive-app/data/invest.csv')
+df_crime = pd.read_csv('../Podcast-episodes-deepdive-app/data/crime.csv')
+df_nature = pd.read_csv('../Podcast-episodes-deepdive-app/data/nature.csv')
+df_allgenres = pd.read_csv('../Podcast-episodes-deepdive-app/data/all_genres_umass.csv')
 
-dfy = pd.DataFrame(df[df['years'] == int(Year)])
-dfm = pd.DataFrame(dfy[dfy['months'] == int(Month)])
+# Select a genre
+select = st.sidebar.selectbox('Select a podcast genre',['Sports & Games','Health & Fitness','Religion & Christianity','Stocks & Investing','Crime & Conspiracies','Nature & Climate','All genres'])
 
-d = {'1. open':[float(item) for item in dfm['1. open']], '2. high':[float(item) for item in dfm['2. high']],
-    '3. low':[float(item) for item in dfm['3. low']], '4. close':[float(item) for item in dfm['4. close']],
-    '5. volume':[float(item) for item in dfm['5. volume']]}
+d = {'Sports & Games':['https://www.dropbox.com/s/lc699tc3v1d7ei9/sports_umass.html?dl=0',\
+                       df_sports,\
+                       {k:sports_lda_model.show_topic(k,topn=15) for k in range(sports_lda_model.num_topics)}],\
+     'Health & Fitness':['https://www.dropbox.com/s/p7vtixk357ozow0/health_umass.html?dl=0',\
+                       df_health,  
+                       {k:health_lda_model.show_topic(k,topn=15) for k in range(health_lda_model.num_topics)}],\
+     'Religion & Christianity':['https://www.dropbox.com/s/yn8v4gkwrfdyrn9/religion_umass.html?dl=0',\
+                       df_religion,\
+                       {k:religion_lda_model.show_topic(k,topn=15) for k in range(religion_lda_model.num_topics)}],\
+     'Stocks & Investing':['https://www.dropbox.com/s/pm69uxl19m3jtxj/invest_umass.html?dl=0',\
+                       df_invest,\
+                       {k:invest_lda_model.show_topic(k,topn=15) for k in range(invest_lda_model.num_topics)}],
+     'Crime & Conspiracies':['https://www.dropbox.com/s/efnqucd0xz4cevg/crime_umass.html?dl=0',\
+                       df_crime,\
+                       {k:crime_lda_model.show_topic(k,topn=15) for k in range(crime_lda_model.num_topics)}],
+     'Nature & Climate':['https://www.dropbox.com/s/36w54cu85cadaca/nature_umass.html?dl=0',\
+                       df_nature,\
+                       {k:nature_lda_model.show_topic(k,topn=15) for k in range(nature_lda_model.num_topics)}],
+     'All genres':['https://www.dropbox.com/s/80i0qqt1cibcdj3/all_genres_30_umass.html?dl=0',\
+                       df_allgenres,\
+                       {k:nature_lda_model.show_topic(k,topn=15) for k in range(nature_lda_model.num_topics)}]}
 
-dff = pd.DataFrame(data=d)
+# load the word2vec model
+file = open('../Podcast-episodes-deepdive-app/model/word2vec.pkl','rb')
+model = pickle.load(file)
+file.close()
 
-dff['dates'] = dfm.index 
+# setting up the dashboard
+keyword = st.text_input('Enter a keyword here','football')
 
-returns = round(np.log(dff['4. close']).diff()*100,2)
-returns.dropna(inplace = True)
+try:
+    similar_words = [item[0] for item in model.wv.most_similar(keyword,topn=10)]
+    # st.markdown(similar_words)
+except KeyError as ke:
+    st.markdown('Specify a different keyword')
 
-d1 = {'dates':list(dfm.index)[1:], '6. one_day_return':returns}
+topics_terms={}
+percentage={}
+weighted_sum={}
+for key,val in d[select][2].items():
+    topics_terms[key]=[x[0] for x in val]
+    percentage[key]=[x[1] for x in val]
+    weighted_sum[key]=0
+    for word in similar_words:
+        for i,w in enumerate(topics_terms[key]):
+            if word==w:
+                weighted_sum[key]+=percentage[key][i]
+            
+topic = sorted(weighted_sum.items(),key=(lambda x: x[1]),reverse=True)[0][0]
+# st.markdown(f'Top-10 words: {topics_terms[topic]}')
+st.bar_chart(pd.DataFrame(percentage[topic],columns=[f'Topic-{topic}'],index=topics_terms[topic]))
+link = d[select][0]
+st.write(f'A 2D visualization of the topics and their terms distribution [link]({link})')
 
-dr = pd.DataFrame(data=d1)
+df = d[select][1]
 
-if y_axis == '1. open' or y_axis == '4. close':
-   if y_axis == '1. open':
-      st.title('opening price of ' + ticker)
-   else:
-      st.title('closing price of ' + ticker)
-elif y_axis == '2. high' or y_axis == '3. low':
-   st.title(y_axis.split('.')[1] + 'est price of ' + ticker)
-elif y_axis == '5. volume':
-   st.title(ticker + ' trade volume')
+episode_length = st.sidebar.selectbox('Choose a duration window for the episodes (in mins)',['5-15','15-30','30-45','45-60','60-60<'])
+l = int(episode_length.split('-')[0])
+if episode_length.split('-')[1]=='60<':
+    u=1000
 else:
-   st.title('one day percentage log return for ' + ticker)
+    u=int(episode_length.split('-')[1])
 
+recommendations = df[(df['Dominant topic']==topic)&(df['Episode duration (in mins)']<u)&(df['Episode duration (in mins)']>=l)][['Podcast name','Episode name','Episode duration (in mins)','Description of the episode','url of the podcast episodes']]    
 
-# plot the value
-if y_axis == 'one_day_return':
-   fig = px.line(dr, x='dates',y=y_axis)
-else:
-   fig = px.line(dff, x='dates',y=y_axis)
+recommendations = recommendations.reset_index()
+    
+st.table(recommendations[['Podcast name','Episode name','Episode duration (in mins)','url of the podcast episodes']])
 
-st.plotly_chart(fig)
-
+with st.expander("See descriptions of the episodes"):
+    st.table(recommendations[['Description of the episode']])
+    
