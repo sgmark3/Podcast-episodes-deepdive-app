@@ -7,41 +7,41 @@ import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd
 
-file = open('Podcast-episodes-deepdive-app/model/health_episodes_lda_model_umass.pkl','rb')
+file = open('/model/health_episodes_lda_model_umass.pkl','rb')
 health_lda_model = pickle.load(file)
 file.close()
 
-file = open('Podcast-episodes-deepdive-app/model/sports_episodes_lda_model_umass.pkl','rb')
+file = open('/model/sports_episodes_lda_model_umass.pkl','rb')
 sports_lda_model = pickle.load(file)
 file.close()
 
-file = open('Podcast-episodes-deepdive-app/model/religion_episodes_lda_model_umass.pkl','rb')
+file = open('/model/religion_episodes_lda_model_umass.pkl','rb')
 religion_lda_model = pickle.load(file)
 file.close()
 
-file = open('Podcast-episodes-deepdive-app/model/invest_episodes_lda_model_umass.pkl','rb')
+file = open('/model/invest_episodes_lda_model_umass.pkl','rb')
 invest_lda_model = pickle.load(file)
 file.close()
 
-file = open('Podcast-episodes-deepdive-app/model/crime_episodes_lda_model_umass.pkl','rb')
+file = open('/model/crime_episodes_lda_model_umass.pkl','rb')
 crime_lda_model = pickle.load(file)
 file.close()
 
-file = open('Podcast-episodes-deepdive-app/model/nature_episodes_lda_model_umass.pkl','rb')
+file = open('/model/nature_episodes_lda_model_umass.pkl','rb')
 nature_lda_model = pickle.load(file)
 file.close()
 
-file = open('Podcast-episodes-deepdive-app/model/all_genres_lda_model_30_umass.pkl','rb')
+file = open('/model/all_genres_lda_model_30_umass.pkl','rb')
 nature_lda_model = pickle.load(file)
 file.close()
 
-df_health = pd.read_csv('Podcast-episodes-deepdive-app/data/health.csv')
-df_sports = pd.read_csv('Podcast-episodes-deepdive-app/data/sports.csv')
-df_religion = pd.read_csv('Podcast-episodes-deepdive-app/data/religion.csv')
-df_invest = pd.read_csv('Podcast-episodes-deepdive-app/data/invest.csv')
-df_crime = pd.read_csv('Podcast-episodes-deepdive-app/data/crime.csv')
-df_nature = pd.read_csv('Podcast-episodes-deepdive-app/data/nature.csv')
-df_allgenres = pd.read_csv('Podcast-episodes-deepdive-app/data/all_genres_umass.csv')
+df_health = pd.read_csv('/data/health.csv')
+df_sports = pd.read_csv('/data/sports.csv')
+df_religion = pd.read_csv('/data/religion.csv')
+df_invest = pd.read_csv('/data/invest.csv')
+df_crime = pd.read_csv('/data/crime.csv')
+df_nature = pd.read_csv('/data/nature.csv')
+df_allgenres = pd.read_csv('/data/all_genres_umass.csv')
 
 # Select a genre
 select = st.sidebar.selectbox('Select a podcast genre',['Sports & Games','Health & Fitness','Religion & Christianity','Stocks & Investing','Crime & Conspiracies','Nature & Climate','All genres'])
@@ -69,7 +69,7 @@ d = {'Sports & Games':['https://www.dropbox.com/s/lc699tc3v1d7ei9/sports_umass.h
                        {k:nature_lda_model.show_topic(k,topn=15) for k in range(nature_lda_model.num_topics)}]}
 
 # load the word2vec model
-file = open('Podcast-episodes-deepdive-app/model/word2vec.pkl','rb')
+file = open('/model/word2vec.pkl','rb')
 model = pickle.load(file)
 file.close()
 
