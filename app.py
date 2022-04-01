@@ -2,8 +2,7 @@
 
 import csv
 import pickle
-import gensim
-from gensim.models import Word2Vec
+#import gensim
 import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd
