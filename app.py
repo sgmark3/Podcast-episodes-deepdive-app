@@ -74,13 +74,18 @@ model = pickle.load(file)
 file.close()
 
 # setting up the dashboard
-keyword = st.text_input('Enter a keyword here','football')
+keywords = st.text_input('Enter a keyword here','football, nfl')
+
+words = keywords.split(', ')
 
 try:
-    similar_words = [item[0] for item in model.wv.most_similar(keyword,topn=10)]
-    # st.markdown(similar_words)
+    similar_words = [[item[0] for item in model.wv.most_similar(word,topn=10)] for word in words]
+    bigrams=[]
+    for pair in combinations(words,2):
+        bigrams.append(pair[0]+'_'+pair[1])
+    similar_words.append(bigrams+words)
 except KeyError as ke:
-    st.markdown('Specify a different keyword')
+    st.markdown('Specify a different set of keywords')
 
 topics_terms={}
 percentage={}
@@ -89,18 +94,14 @@ for key,val in d[select][2].items():
     topics_terms[key]=[x[0] for x in val]
     percentage[key]=[x[1] for x in val]
     weighted_sum[key]=0
-    for word in similar_words:
-        for i,w in enumerate(topics_terms[key]):
-            if word==w:
-                weighted_sum[key]+=percentage[key][i]
-            
-topic = sorted(weighted_sum.items(),key=(lambda x: x[1]),reverse=True)[0][0]
-# st.markdown(f'Top-10 words: {topics_terms[topic]}')
-st.bar_chart(pd.DataFrame(percentage[topic],columns=[f'Topic-{topic}'],index=topics_terms[topic]))
+    for entry in similar_words:
+        for word in entry:
+            for i,w in enumerate(topics_terms[key]):
+                if word==w:
+                    weighted_sum[key]+=percentage[key][i]
+
 link = d[select][0]
 st.write(f'A 2D visualization of the topics and their terms distribution [link]({link})')
-
-df = d[select][1]
 
 episode_length = st.sidebar.selectbox('Choose a duration window for the episodes (in mins)',['5-15','15-30','30-45','45-60','60-60<'])
 l = int(episode_length.split('-')[0])
@@ -108,13 +109,17 @@ if episode_length.split('-')[1]=='60<':
     u=1000
 else:
     u=int(episode_length.split('-')[1])
+            
+topic, score = sorted(weighted_sum.items(),key=(lambda x: x[1]),reverse=True)[0]
 
-recommendations = df[(df['Dominant topic']==topic)&(df['Episode duration (in mins)']<u)&(df['Episode duration (in mins)']>=l)][['Podcast name','Episode name','Episode duration (in mins)','Description of the episode','url of the podcast episodes']]    
-
-recommendations = recommendations.reset_index()
-    
-st.table(recommendations[['Podcast name','Episode name','Episode duration (in mins)','url of the podcast episodes']])
-
-with st.expander("See descriptions of the episodes"):
-    st.table(recommendations[['Description of the episode']])
+if score > 0:
+    st.bar_chart(pd.DataFrame(percentage[topic],columns=[f'Topic-{topic}'],index=topics_terms[topic]))
+    df = d[select][1]
+    recommendations = df[(df['Dominant topic']==topic)&(df['Episode duration (in mins)']<u)&(df['Episode duration (in mins)']>=l)][['Podcast name','Episode name','Episode duration (in mins)','Description of the episode','url of the podcast episodes']]
+    recommendations = recommendations.reset_index()
+    st.table(recommendations[['Podcast name','Episode name','Episode duration (in mins)','url of the podcast episodes']])
+    with st.expander("See descriptions of the episodes"):
+        st.table(recommendations[['Description of the episode']])
+else:
+    st.write('No topic found. Please enter a different set of keywords')
     
