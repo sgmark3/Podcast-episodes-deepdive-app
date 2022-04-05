@@ -32,7 +32,7 @@ nature_lda_model = pickle.load(file)
 file.close()
 
 file = open('model/all_genres_lda_model_30_umass.pkl','rb')
-nature_lda_model = pickle.load(file)
+allgenres_lda_model = pickle.load(file)
 file.close()
 
 df_health = pd.read_csv('data/health.csv')
@@ -66,7 +66,7 @@ d = {'Sports & Games':['https://www.dropbox.com/s/lc699tc3v1d7ei9/sports_umass.h
                        {k:nature_lda_model.show_topic(k,topn=15) for k in range(nature_lda_model.num_topics)}],
      'All genres':['https://www.dropbox.com/s/80i0qqt1cibcdj3/all_genres_30_umass.html?dl=0',\
                        df_allgenres,\
-                       {k:nature_lda_model.show_topic(k,topn=15) for k in range(nature_lda_model.num_topics)}]}
+                       {k:allgenres_lda_model.show_topic(k,topn=15) for k in range(allgenres_lda_model.num_topics)}]}
 
 # load the word2vec model
 file = open('model/word2vec.pkl','rb')
