@@ -75,7 +75,7 @@ model = pickle.load(file)
 file.close()
 
 # setting up the dashboard
-keywords = st.text_input('Enter a keyword here','football, nfl')
+keywords = st.text_input('Enter keywords here (each separated by a comma and a single space)','football, nfl')
 
 words = keywords.split(', ')
 
