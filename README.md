@@ -20,7 +20,7 @@ The steps and tools used to develop the app are described below.
 ## Step 2: Model development & visualization
 - The LDA model (Latent Dirichlet Allocation) is used for topic modelling, and the word2vec model is used to extract most similar topic to the keywords entered by the user. We use gensim package for model development. Here's the link to the github repository containing scripts, models and visualization html files: https://github.com/sgmark3/Topic-modeling-of-podcast-episodes 
 - We use pyLDAvis to deploy an interative visualisation tool deployed as an html page. 
-- The visualization shows: 1) the distribution of terms across the transcripts corresponding to different topics, and the distribution of the same set of terms across the entire corpus, and 2) a 2D embedding of the corpus (collection of transcripts in our case) in the space of two principle components. These distributions can be varied by choosing a value of the relevency parameter through an interactive slider tool.
+- The visualization shows: 1) the distribution of terms across the transcripts corresponding to different topics, and the distribution of the same set of terms across the entire corpus, and 2) a 2D embedding of the corpus (collection of transcripts in our case) in the space of two principle components. These distributions can be varied by choosing a value of the relevancy parameter through an interactive slider tool.
 - Here's a reference for further exploration: https://pyldavis.readthedocs.io/en/latest/readme.html 
 
 ## Step 3: Web application
