@@ -86,7 +86,7 @@ try:
         bigrams.append(pair[0]+'_'+pair[1])
     similar_words.append(bigrams+words)
 except KeyError as ke:
-    st.markdown('Specify a different set of keywords')
+    st.write('Specify a different set of keywords')
 
 topics_terms={}
 percentage={}
@@ -114,6 +114,7 @@ else:
 topic, score = sorted(weighted_sum.items(),key=(lambda x: x[1]),reverse=True)[0]
 
 if score > 0:
+    st.markdown('The proportion of fifteen most frequent terms in the transcripts corresponding to the chosen topic:')
     st.bar_chart(pd.DataFrame(percentage[topic],columns=[f'Topic-{topic}'],index=topics_terms[topic]))
     df = d[select][1]
     recommendations = df[(df['Dominant topic']==topic)&(df['Episode duration (in mins)']<u)&(df['Episode duration (in mins)']>=l)][['Podcast name','Episode name','Episode duration (in mins)','Description of the episode','url of the podcast episodes']]
