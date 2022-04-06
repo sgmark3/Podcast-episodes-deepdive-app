@@ -102,7 +102,7 @@ for key,val in d[select][2].items():
                     weighted_sum[key]+=percentage[key][i]
 
 link = d[select][0]
-st.write(f'A 2D visualization summarizing some of the descriptive statistics related to the topics found by the genre-specific LDA model [link]({link})')
+st.write(f'A 2D visualization summarizing some of the descriptive statistics related to the topics found by the genre-specific LDA model [link]({link}) (download the file to visualise and interact with the html file generated using the pyLDAvis package)')
 
 episode_length = st.sidebar.selectbox('Choose a duration window for the episodes (in mins)',['5-15','15-30','30-45','45-60','60-60<'])
 l = int(episode_length.split('-')[0])
