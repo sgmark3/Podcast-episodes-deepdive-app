@@ -45,7 +45,7 @@ df_nature = pd.read_csv('data/nature.csv')
 df_allgenres = pd.read_csv('data/all_genres_umass.csv')
 
 # Select a genre
-select = st.sidebar.selectbox('Select a podcast genre',['Sports & Games','Health & Fitness','Religion & Christianity','Stocks & Investing','Crime & Conspiracies','Nature & Climate','All genres'])
+select = st.sidebar.selectbox('Select a podcast genre',['All genres','Sports & Games','Health & Fitness','Religion & Christianity','Stocks & Investing','Crime & Conspiracies','Nature & Climate'])
 
 d = {'Sports & Games':['https://www.dropbox.com/s/lc699tc3v1d7ei9/sports_umass.html?dl=0',\
                        df_sports,\
@@ -75,7 +75,7 @@ model = pickle.load(file)
 file.close()
 
 # setting up the dashboard
-keywords = st.text_input('Enter keywords here (each separated by a comma and a single space)','football, nfl')
+keywords = st.text_input('Enter keywords here (each separated by a comma and a single space)','crime, murder, cops')
 
 words = keywords.split(', ')
 
